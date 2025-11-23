@@ -5,7 +5,7 @@ import with:
 from DubovskyModel import dubovsky_bank_model
 
 Function: 
-dubovsky_bank_model(V_dot_m3_s,Density_air,Cp_air,Tube_cols,Tube_rows,OD_Tube_SI,ID_Tube_SI,L_tube_SI,ht_air,Epsilon,K_PCM_Solid,Q_total_J,T_melt_C,MS_Temp_C,dt,h_air_outer,k_tm)
+dubovsky_bank_model(V_dot_m3_s,Density_air,Cp_air,Tube_cols,Tube_rows,OD_Tube_SI,ID_Tube_SI,L_tube_SI,ht_air,Epsilon,K_PCM,Q_total_J,T_melt_C,MS_Temp_C,dt,h_air_outer,k_tm)
 Returns
 class AnalyticalResult:
 t_s: np.ndarray
@@ -35,7 +35,7 @@ ID_Tube_SI: Tube inner diameter [m]
 L_tube_SI: Tube length [m]
 ht_air: air-side h  [W/m^2-K]
 Epsilon: air-temperature correction factor
-K_PCM_Solid: conductivity for ID/(4*K) term [W/m-K]
+K_PCM: conductivity for ID/(4*K) term [W/m-K]
 Q_total_J: Total energy storage (m_pcm * hsl) [J]
 T_melt_C: float, Melting temperature [C]
 MS_Temp_C: Inlet Temperature [C] 
@@ -77,7 +77,7 @@ def dubovsky_bank_model(
     L_tube_SI: float,     # [m]
     ht_air: float,        # air-side h (used if no override) [W/m^2-K]
     Epsilon: float,       # air-temperature correction factor
-    K_PCM_Solid: float,   # conductivity for ID/(4*K) term [W/m-K]
+    K_PCM: float,   # conductivity for ID/(4*K) term [W/m-K]
     Q_total_J: float,     # energy scale (e.g., m_pcm * hsl) [J]
     T_melt_C: float,      # C
     MS_Temp_C: float,     # C
@@ -101,10 +101,10 @@ def dubovsky_bank_model(
     ht_for_ho = 1.0 / ( (ID_Tube_SI / (OD_Tube_SI * h_air_outer)) + rt )     # [W/m^2·K]
 
     # 4) Overall ho
-    ho  = 1.0 / ( (1.0/ht_for_ho) + (Epsilon/hf) + (ID_Tube_SI/(4.0*K_PCM_Solid)) )
+    ho  = 1.0 / ( (1.0/ht_for_ho) + (Epsilon/hf) + (ID_Tube_SI/(4.0*K_PCM)) )
     
     # 5) P and solve b from (1 - exp(-b))/b = 1 - P
-    P   = ho * (ID_Tube_SI/(4.0*K_PCM_Solid))
+    P   = ho * (ID_Tube_SI/(4.0*K_PCM))
     target = 1.0 - P
     f = lambda b: (1.0 - np.exp(-b)) / b - target
     b = float(brentq(f, 1e-9, 1e3, xtol=1e-12, maxiter=200))
