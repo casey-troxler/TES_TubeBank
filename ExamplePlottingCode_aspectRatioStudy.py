@@ -58,7 +58,7 @@ for A in inlet_areas_m2:
             Tin_C=12.2,
             Snr= 3,
             Spr=1.05,
-            epsilon=0.5,
+            epsilon=0.005,
             dt_s=0.5
         )
 
@@ -135,7 +135,7 @@ ax3.text(xloc, yloc, '(c)', transform=ax3.transAxes, fontsize=16, va='top')
 ax4.text(xloc, yloc, '(d)', transform=ax4.transAxes, fontsize=16, va='top')
 
 #Limits of each subplot, tune per results 
-ax1.axis([0,2.55,3900,5400])
+ax1.axis([0,2.55,3000,5400])
 ax2.axis([0,2.55,0.1,5*10**5])
 ax3.axis([0,2.55,3.8,11])
 ax4.axis([0,2.55,0.01,10**4])
@@ -149,4 +149,5 @@ plt.savefig('aspectRatio.pdf',bbox_inches='tight', dpi=150)
 
 #show plot in previewer
 plt.show()
+
 
